@@ -93,7 +93,7 @@ def reaction_rule(smarts: str) -> ty.Callable:
                     # Apply reaction rule to each match of `pattern` on `mol`.
                     for match in matches:
                         
-                        if result := func(Chem.RWMol(mol), match):
+                        if result := func(Chem.RWMol(mol), list(match)):
                             # Successfully applied reaction rule.
                             env = result.GetMol()
 
