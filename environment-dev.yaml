@@ -1,0 +1,11 @@
+name: moltools
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+    - rdkit==2023.03.1
+    - pre-commit==3.3.3
+    - -e .
