@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="MolTools.Core",
+    name="MolTools",
     version="0.0.1",
     author="David Meijer",
     author_email="david.meijer@wur.nl",
