@@ -7,6 +7,7 @@ Dependencies:   python>=3.10
                 numpy>=1.21.2
 """
 import typing as ty
+from logging import Logger
 
 import numpy as np
 from rdkit import Chem, DataStructs
@@ -15,7 +16,8 @@ from rdkit.Chem import AllChem
 def smiles_to_mol(
     smiles: str, 
     add_atom_mapping: bool = False,
-    sanitize: bool = True
+    sanitize: bool = True,
+    logger: ty.Optional[Logger] = None,
 ) -> ty.Optional[Chem.Mol]:
     """
     Convert a SMILES string to an RDKit molecule.
@@ -31,6 +33,8 @@ def smiles_to_mol(
         molecule (with index 0) will be mapped as 1, the second atom as 2, etc.
     sanitize : bool, optional
         Whether to sanitize the molecule, by default True, by default True.
+    logger : ty.Optional[Logger], optional
+        Logger for logging, by default None.
     
     Returns
     -------
@@ -42,12 +46,30 @@ def smiles_to_mol(
     TypeError
         If the SMILES is not a string.
     """
+    if logger is not None:
+        msg = (
+            f"Converting SMILES '{smiles}' to a molecule:",
+            f"\n\tadd_atom_mapping: {add_atom_mapping}",
+            f"\n\tsanitize: {sanitize}",
+        )
+        logger.debug(msg)
+
     if not isinstance(smiles, str):
-        raise TypeError(f"SMILES must be a string, not {type(smiles)}.")
+        msg = f"SMILES must be a string, not {type(smiles)}."
+
+        if logger is not None:
+            logger.error(msg)
+
+        raise TypeError(msg)
 
     mol = Chem.MolFromSmiles(smiles, sanitize=sanitize)
 
     if mol is None:
+        
+        if logger is not None:
+            msg = f"Could not convert SMILES '{smiles}' to a molecule."
+            logger.error(msg)
+
         return None
     
     if add_atom_mapping:
@@ -66,6 +88,7 @@ def mol_to_smiles(
     canonical: bool = True,
     all_bonds_explicit: bool = False,
     all_hs_explicit: bool = False,
+    logger: ty.Optional[Logger] = None,
 ) -> str:
     """
     Convert an RDKit molecule to a SMILES string.
@@ -90,6 +113,8 @@ def mol_to_smiles(
         Whether to include all bonds in the SMILES, by default False.
     all_hs_explicit : bool, optional
         Whether to include all hydrogens in the SMILES, by default False.
+    logger : ty.Optional[Logger], optional
+        Logger for logging, by default None.
     
     Returns
     -------
@@ -101,8 +126,26 @@ def mol_to_smiles(
     TypeError
         If the molecule is not an RDKit molecule.
     """
+    if logger is not None:
+        msg = (
+            f"Converting molecule to SMILES:",
+            f"\n\tremove_atom_mapping: {remove_atom_mapping}",
+            f"\n\tisomeric_smiles: {isomeric_smiles}",
+            f"\n\tkekule_smiles: {kekule_smiles}",
+            f"\n\trooted_at_atom: {rooted_at_atom}",
+            f"\n\tcanonical: {canonical}",
+            f"\n\tall_bonds_explicit: {all_bonds_explicit}",
+            f"\n\tall_hs_explicit: {all_hs_explicit}",
+        )
+        logger.debug(msg)
+
     if not isinstance(mol, Chem.Mol):
-        raise TypeError(f"mol must be an RDKit molecule, not {type(mol)}.")
+        msg = f"mol must be an RDKit molecule, not {type(mol)}."
+
+        if logger is not None:
+            logger.error(msg)
+
+        raise TypeError(msg)
     
     if remove_atom_mapping:
         # Remove atom mapping numbers from the atoms in the molecule.
@@ -124,7 +167,8 @@ def mol_to_smiles(
 def mol_to_fingerprint(
     mol: Chem.Mol, 
     radius: int = 2, 
-    num_bits: int = 2048
+    num_bits: int = 2048,
+    logger: ty.Optional[Logger] = None,
 ) -> np.array:
     """
     Convert an RDKit molecule to a Morgan fingerprint.
@@ -137,6 +181,8 @@ def mol_to_fingerprint(
         Radius of the fingerprint, by default 2.
     num_bits : int, optional
         Number of bits in the fingerprint, by default 2048.
+    logger : ty.Optional[Logger], optional
+        Logger for logging, by default None.
     
     Returns
     -------
@@ -148,8 +194,21 @@ def mol_to_fingerprint(
     TypeError
         If the molecule is not an RDKit molecule.
     """
+    if logger is not None:
+        msg = (
+            f"Converting molecule to Morgan fingerprint:",
+            f"\n\tradius: {radius}",
+            f"\n\tnum_bits: {num_bits}",
+        )
+        logger.debug(msg)
+
     if not isinstance(mol, Chem.Mol):
-        raise TypeError(f"mol must be an RDKit molecule, not {type(mol)}.")
+        msg = f"mol must be an RDKit molecule, not {type(mol)}."
+
+        if logger is not None:
+            logger.error(msg)
+
+        raise TypeError(msg)
 
     # Create an empty array to store the fingerprint.
     fp_arr = np.zeros((0,), dtype=np.int8)

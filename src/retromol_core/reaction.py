@@ -7,6 +7,7 @@ Dependencies:   python>=3.10
 """
 import typing as ty 
 from functools import wraps
+from logging import Logger
 
 import numpy as np
 from rdkit import Chem 
@@ -32,7 +33,13 @@ class SanitizationError(Exception):
         msg = f"Failed to sanitize molecule: '{Chem.MolToSmiles(mol)}'"
         super().__init__(msg)
 
-def mol_to_encoding(mol: Chem.Mol, radius: int, num_bits: int, N: int) -> int:
+def mol_to_encoding(
+    mol: Chem.Mol, 
+    radius: int, 
+    num_bits: int, 
+    N: int,
+    logger: ty.Optional[Logger] = None,
+) -> int:
     """
     Convert an RDKit molecule to a binary fingerprint encoding. The encoding
     includes the atom map numbers of the molecule. The atom map numbers are
@@ -57,12 +64,23 @@ def mol_to_encoding(mol: Chem.Mol, radius: int, num_bits: int, N: int) -> int:
         Number of bits of the Morgan fingerprint.
     N : int
         Number of atoms in the (parent) molecule.
+    logger : ty.Optional[Logger], optional
+        Logger for logging, by default None.
 
     Returns
     -------
     int
         Binary fingerprint encoding of the molecule.
     """
+    if logger is not None:
+        msg = (
+            f"Converting molecule '{Chem.MolToSmiles(mol)}' to binary fingerprint encoding.",
+            f"\n\tradius: {radius}",
+            f"\n\tnum_bits: {num_bits}",
+            f"\n\tN: {N}",
+        )
+        logger.debug(msg)
+
     # Get all asigned atom map numbers in the molecule.
     amns = [
         atom.GetAtomMapNum()            # Atom map number.
@@ -118,7 +136,7 @@ def reaction_rule(smarts: str) -> ty.Callable:
         """
 
         @wraps(func) # Preserve function metadata.
-        def wrapped(mol: Chem.Mol) -> ty.Generator[ty.List[Chem.Mol], None, None]:
+        def wrapped(mol: Chem.Mol, **kwargs) -> ty.Generator[ty.List[Chem.Mol], None, None]:
             """
             Wrapped reaction rule function.
 
@@ -126,6 +144,8 @@ def reaction_rule(smarts: str) -> ty.Callable:
             ----------
             mol : Chem.Mol
                 Molecule to apply the reaction rule to.
+            **kwargs
+                Keyword arguments for the reaction rule function.
             
             Yields
             ------
@@ -149,7 +169,7 @@ def reaction_rule(smarts: str) -> ty.Callable:
                     # Apply reaction rule to each match of `pattern` on `mol`.
                     for match in matches:
                         
-                        if result := func(Chem.RWMol(mol), list(match)):
+                        if result := func(Chem.RWMol(mol), list(match), **kwargs):
                             # Successfully applied reaction rule.
                             env = result.GetMol()
 
