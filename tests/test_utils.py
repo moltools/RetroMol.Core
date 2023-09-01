@@ -38,6 +38,15 @@ class TestSmilesToMol(unittest.TestCase):
         mol = smiles_to_mol(r"CC(")
         self.assertIsNone(mol)
 
+    def test_smiles_to_mol_for_non_string_smiles(self) -> None:
+        """
+        Test the function 'smiles_to_mol' with a non-string SMILES.
+        """
+        smiles = None
+
+        with self.assertRaises(TypeError):
+            smiles_to_mol(smiles)
+
     def test_smiles_to_mol_with_atom_mapping(self) -> None:
         """
         Test the function 'smiles_to_mol' with a valid SMILES string and atom
@@ -88,6 +97,15 @@ class TestMolToFingerprint(unittest.TestCase):
 
         self.assertIsInstance(fingerprint, np.ndarray)
         self.assertEqual(fingerprint.shape, (num_bits,))
+
+    def test_mol_to_fingerprint_for_invalid_mol(self) -> None:
+        """
+        Test the function 'mol_to_fingerprint' with an invalid RDKit molecule.
+        """
+        mol = None 
+
+        with self.assertRaises(TypeError):
+            mol_to_fingerprint(mol)
 
 if __name__ == "__main__":
     unittest.main()

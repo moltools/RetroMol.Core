@@ -142,7 +142,15 @@ def mol_to_fingerprint(
     -------
     np.array
         Morgan fingerprint.
+
+    Raises
+    ------
+    TypeError
+        If the molecule is not an RDKit molecule.
     """
+    if not isinstance(mol, Chem.Mol):
+        raise TypeError(f"mol must be an RDKit molecule, not {type(mol)}.")
+
     # Create an empty array to store the fingerprint.
     fp_arr = np.zeros((0,), dtype=np.int8)
 
