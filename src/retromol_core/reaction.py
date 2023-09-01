@@ -1,7 +1,7 @@
 """
 Author:         David Meijer
 Licence:        MIT License
-Description:    Wrapper functions around RDKit for reaction chemistry.
+Description:    Wrapper functions around RDKit for reaction cheminformatics.
 Dependencies:   python>=3.10
                 RDKit>=2023.03.1
 """
@@ -12,7 +12,7 @@ from logging import Logger
 import numpy as np
 from rdkit import Chem 
 
-from .utils import mol_to_fingerprint
+from .chem_utils import mol_to_morgan_fingerprint
 
 class SanitizationError(Exception):
     """
@@ -93,7 +93,7 @@ def mol_to_encoding(
     amns = np.array([1 if x in amns else 0 for x in np.arange(N)])
 
     # Convert molecule to fingerprint.
-    fp = mol_to_fingerprint(mol, radius, num_bits)
+    fp = mol_to_morgan_fingerprint(mol, radius, num_bits)
 
     # Concatenate fingerprint and atom map number vector.
     conc_fp = np.hstack([fp, amns])
@@ -164,7 +164,7 @@ def reaction_rule(smarts: str, logger: ty.Optional[Logger] = None) -> ty.Callabl
             if logger is not None:
                 msg = (
                     f"Applying reaction rule '{func.__name__}' "
-                    f"to molecule '{Chem.MolToSmiles(mol)}'."
+                    f"to molecule '{Chem.MolToSmiles(mol)}':"
                     f"\n\tsmarts: {smarts}"
                 )
                 logger.debug(msg)
@@ -176,7 +176,7 @@ def reaction_rule(smarts: str, logger: ty.Optional[Logger] = None) -> ty.Callabl
                     if logger is not None:
                         msg = (
                             f"Reaction rule '{func.__name__}' "
-                            f"did not match molecule '{Chem.MolToSmiles(mol)}'."
+                            f"did not match molecule '{Chem.MolToSmiles(mol)}':"
                             f"\n\tsmarts: {smarts}",
                         )
                         logger.debug(msg)
@@ -228,7 +228,7 @@ def reaction_rule(smarts: str, logger: ty.Optional[Logger] = None) -> ty.Callabl
                             if logger is not None:
                                 msg = (
                                     f"Failed to apply reaction rule '{func.__name__}' "
-                                    f"to molecule '{Chem.MolToSmiles(mol)}'."
+                                    f"to molecule '{Chem.MolToSmiles(mol)}':"
                                     f"\n\tsmarts: {smarts}"
                                 )
                                 logger.error(msg)

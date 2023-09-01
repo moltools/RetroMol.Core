@@ -11,10 +11,10 @@ import unittest
 import numpy as np
 from rdkit import Chem, RDLogger
 
-from retromol_core.utils import (
+from retromol_core.chem_utils import (
     smiles_to_mol, 
     mol_to_smiles, 
-    mol_to_fingerprint
+    mol_to_morgan_fingerprint
 )
 
 # Turn off RDKit warnings for testing.
@@ -93,7 +93,7 @@ class TestMolToFingerprint(unittest.TestCase):
         radius = 2
         num_bits = 1024
 
-        fingerprint = mol_to_fingerprint(mol, radius, num_bits)
+        fingerprint = mol_to_morgan_fingerprint(mol, radius, num_bits)
 
         self.assertIsInstance(fingerprint, np.ndarray)
         self.assertEqual(fingerprint.shape, (num_bits,))
@@ -105,7 +105,7 @@ class TestMolToFingerprint(unittest.TestCase):
         mol = None 
 
         with self.assertRaises(TypeError):
-            mol_to_fingerprint(mol)
+            mol_to_morgan_fingerprint(mol)
 
 if __name__ == "__main__":
     unittest.main()
