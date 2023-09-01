@@ -5,9 +5,98 @@ Description:    General utility functions.
 Dependencies:   python>=3.10
 """
 import logging 
+import errno
+import os 
 import os.path as osp
+import signal
 import typing as ty
 from enum import Enum 
+from functools import wraps
+
+class TimeoutError(Exception):
+    """
+    Exception raised when a timeout occurs.
+    """
+    pass
+
+def timeout(
+    seconds: int,
+    error_message: str = os.strerror(errno.ETIME)
+) -> ty.Callable:
+    """
+    Decorator that raises a TimeoutError if the decorated function does not
+    return within the given amount of seconds.
+    
+    Parameters
+    ----------
+    seconds : int
+        Amount of seconds to wait before raising a TimeoutError.
+    error_message : str, optional
+        Error message to raise when a timeout occurs, by default
+        os.strerror(errno.ETIME).
+    
+    Returns
+    -------
+    ty.Callable
+        Decorated (timed) function.
+    """
+    def decorator(func: ty.Callable) -> ty.Callable:
+        """
+        Decorator that raises a TimeoutError if the decorated function does not
+        return within the given amount of seconds.
+        
+        Parameters
+        ----------
+        func : ty.Callable
+            Function to decorate.
+        
+        Returns
+        -------
+        ty.Callable
+            Decorated (timed) function.
+        """
+        # Define a signal handler that raises a TimeoutError when the signal is
+        # received.
+        def _handle_timeout(signum, frame):
+            raise TimeoutError(error_message)
+
+        @wraps(func) # Preserve function metadata.
+        def wrapper(*args, **kwargs) -> ty.Any:
+            """
+            Decorated function that raises a TimeoutError if the decorated
+            function does not return within the given amount of seconds.
+            
+            Parameters
+            ----------
+            *args : ty.Any
+                Positional arguments to pass to the decorated function.
+            **kwargs : ty.Any
+                Keyword arguments to pass to the decorated function.
+            
+            Returns
+            -------
+            ty.Any
+                Result of the decorated function.
+            """
+            # Set the signal handler for the alarm signal and start the alarm.
+            signal.signal(signal.SIGALRM, _handle_timeout)
+
+            # Set the alarm to go off after the given amount of seconds.
+            signal.alarm(seconds)
+
+            try:
+                # Call the decorated function.
+                result = func(*args, **kwargs)
+                
+            finally:
+                # Cancel the alarm.
+                signal.alarm(0)
+
+            return result
+
+        return wrapper
+    
+    return decorator
 
 class LoggerLevel(Enum):
     DEBUG       = logging.DEBUG 
