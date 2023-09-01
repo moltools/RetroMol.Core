@@ -103,7 +103,7 @@ def mol_to_encoding(
 
     return encoding
 
-def reaction_rule(smarts: str) -> ty.Callable:
+def reaction_rule(smarts: str, logger: ty.Optional[Logger] = None) -> ty.Callable:
     """
     Decorator for defining pattern-based reaction rules.
 
@@ -111,6 +111,8 @@ def reaction_rule(smarts: str) -> ty.Callable:
     ----------
     smarts : str
         SMARTS pattern of the reaction rule.
+    logger : ty.Optional[Logger], optional
+        Logger for logging, by default None.
     
     Returns
     -------
@@ -159,10 +161,27 @@ def reaction_rule(smarts: str) -> ty.Callable:
             SanitizationError
                 Raised when the result of the reaction rule cannot be sanitized.
             """
+            if logger is not None:
+                msg = (
+                    f"Applying reaction rule '{func.__name__}' "
+                    f"to molecule '{Chem.MolToSmiles(mol)}'."
+                    f"\n\tsmarts: {smarts}"
+                )
+                logger.debug(msg)
+
             # Check if `mol` matches `pattern`.
             match list(mol.GetSubstructMatches(pattern)):
-                case []:
-                    # No matches found, yield empty list.
+                case []: 
+                    
+                    if logger is not None:
+                        msg = (
+                            f"Reaction rule '{func.__name__}' "
+                            f"did not match molecule '{Chem.MolToSmiles(mol)}'."
+                            f"\n\tsmarts: {smarts}",
+                        )
+                        logger.debug(msg)
+
+                    # Molecule does not match `pattern`, yield empty list.
                     yield []
                 
                 case matches:
@@ -170,6 +189,15 @@ def reaction_rule(smarts: str) -> ty.Callable:
                     for match in matches:
                         
                         if result := func(Chem.RWMol(mol), list(match), **kwargs):
+
+                            if logger is not None:
+                                msg = (
+                                    f"Successfully applied reaction rule '{func.__name__}' "
+                                    f"to molecule '{Chem.MolToSmiles(mol)}'."
+                                    f"\n\tsmarts: {smarts}"
+                                )
+                                logger.debug(msg)        
+
                             # Successfully applied reaction rule.
                             env = result.GetMol()
 
@@ -193,6 +221,15 @@ def reaction_rule(smarts: str) -> ty.Callable:
                             yield products
 
                         else: 
+                            
+                            if logger is not None:
+                                msg = (
+                                    f"Failed to apply reaction rule '{func.__name__}' "
+                                    f"to molecule '{Chem.MolToSmiles(mol)}'."
+                                    f"\n\tsmarts: {smarts}"
+                                )
+                                logger.error(msg)
+
                             # Failed to apply reaction rule, yield empty list.
                             yield []
 

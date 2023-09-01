@@ -48,9 +48,9 @@ def smiles_to_mol(
     """
     if logger is not None:
         msg = (
-            f"Converting SMILES '{smiles}' to a molecule:",
-            f"\n\tadd_atom_mapping: {add_atom_mapping}",
-            f"\n\tsanitize: {sanitize}",
+            f"Converting SMILES '{smiles}' to a molecule:"
+            f"\n\tadd_atom_mapping: {add_atom_mapping}"
+            f"\n\tsanitize: {sanitize}"
         )
         logger.debug(msg)
 
@@ -196,9 +196,9 @@ def mol_to_fingerprint(
     """
     if logger is not None:
         msg = (
-            f"Converting molecule to Morgan fingerprint:",
-            f"\n\tradius: {radius}",
-            f"\n\tnum_bits: {num_bits}",
+            f"Converting molecule to Morgan fingerprint:"
+            f"\n\tradius: {radius}"
+            f"\n\tnum_bits: {num_bits}"
         )
         logger.debug(msg)
 
