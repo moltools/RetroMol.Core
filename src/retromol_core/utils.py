@@ -12,7 +12,11 @@ import numpy as np
 from rdkit import Chem, DataStructs
 from rdkit.Chem import AllChem
 
-def smiles_to_mol(smiles: str, sanitize: bool = True) -> ty.Optional[Chem.Mol]:
+def smiles_to_mol(
+    smiles: str, 
+    add_atom_mapping: bool = False,
+    sanitize: bool = True
+) -> ty.Optional[Chem.Mol]:
     """
     Convert a SMILES string to an RDKit molecule.
     
@@ -20,6 +24,11 @@ def smiles_to_mol(smiles: str, sanitize: bool = True) -> ty.Optional[Chem.Mol]:
     ----------
     smiles : str
         SMILES string of the molecule.
+    add_atom_mapping : bool, optional
+        Whether to add atom mapping numbers to the atoms in the molecule after
+        converting from SMILES, by default False. Atoms will be mapped as 
+        its atom index in the molecule plus one. I.e., the first atom in the
+        molecule (with index 0) will be mapped as 1, the second atom as 2, etc.
     sanitize : bool, optional
         Whether to sanitize the molecule, by default True, by default True.
     
@@ -28,10 +37,21 @@ def smiles_to_mol(smiles: str, sanitize: bool = True) -> ty.Optional[Chem.Mol]:
     ty.Optional[Chem.Mol]
         RDKit molecule. None if the SMILES could not be converted.
     """
-    return Chem.MolFromSmiles(smiles, sanitize=sanitize)
+    mol = Chem.MolFromSmiles(smiles, sanitize=sanitize)
+
+    if mol is None:
+        return None
+    
+    if add_atom_mapping:
+        # Add atom mapping numbers to the atoms in the molecule.
+        for atom in mol.GetAtoms():
+            atom.SetAtomMapNum(atom.GetIdx() + 1)
+
+    return mol
 
 def mol_to_smiles(
     mol: Chem.Mol, 
+    remove_atom_mapping: bool = False,
     isomeric_smiles: bool = True,
     kekule_smiles: bool = False,
     rooted_at_atom: int = -1,
@@ -46,6 +66,9 @@ def mol_to_smiles(
     ----------
     mol : Chem.Mol
         RDKit molecule.
+    remove_atom_mapping : bool, optional
+        Whether to remove atom mapping numbers from the atoms in the molecule 
+        before converting to SMILES, by default False.
     isomeric_smiles : bool, optional
         Whether to include stereochemistry in the SMILES, by default True.
     kekule_smiles : bool, optional
@@ -65,7 +88,12 @@ def mol_to_smiles(
     str
         SMILES string.
     """
-    return Chem.MolToSmiles(
+    if remove_atom_mapping:
+        # Remove atom mapping numbers from the atoms in the molecule.
+        for atom in mol.GetAtoms():
+            atom.SetAtomMapNum(0)
+
+    smiles = Chem.MolToSmiles(
         mol, 
         isomericSmiles=isomeric_smiles,
         kekuleSmiles=kekule_smiles,
@@ -74,6 +102,8 @@ def mol_to_smiles(
         allBondsExplicit=all_bonds_explicit,
         allHsExplicit=all_hs_explicit,
     )
+
+    return smiles 
 
 def mol_to_fingerprint(
     mol: Chem.Mol, 

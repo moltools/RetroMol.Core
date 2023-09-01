@@ -44,6 +44,9 @@ def mol_to_encoding(mol: Chem.Mol, radius: int, num_bits: int, N: int) -> int:
     are applied to molecules with repetitive substructures, such as
     polymerization reactions.
 
+    NOTE: Make sure to add atom mapping numbers to the atoms in the molecule
+    before converting to an encoding.
+
     Parameters
     ----------
     mol : Chem.Mol
