@@ -8,7 +8,10 @@ Dependencies:   python>=3.10
 import typing as ty 
 from functools import wraps
 
+import numpy as np
 from rdkit import Chem 
+
+from .utils import mol_to_fingerprint
 
 class SanitizationError(Exception):
     """
@@ -28,6 +31,56 @@ class SanitizationError(Exception):
         """
         msg = f"Failed to sanitize molecule: '{Chem.MolToSmiles(mol)}'"
         super().__init__(msg)
+
+def mol_to_encoding(mol: Chem.Mol, radius: int, num_bits: int, N: int) -> int:
+    """
+    Convert an RDKit molecule to a binary fingerprint encoding. The encoding
+    includes the atom map numbers of the molecule. The atom map numbers are
+    appended to the fingerprint encoding as a binary vector of length `N`, where
+    `N` is the number of atoms in the (parent) molecule.
+
+    This encoding is used to create unique encodings for repetitive sub-
+    structures from the same molecule. This is useful for reaction rules that
+    are applied to molecules with repetitive substructures, such as
+    polymerization reactions.
+
+    Parameters
+    ----------
+    mol : Chem.Mol
+        RDKit molecule.
+    radius : int
+        Radius of the Morgan fingerprint.
+    num_bits : int
+        Number of bits of the Morgan fingerprint.
+    N : int
+        Number of atoms in the (parent) molecule.
+
+    Returns
+    -------
+    int
+        Binary fingerprint encoding of the molecule.
+    """
+    # Get all asigned atom map numbers in the molecule.
+    amns = [
+        atom.GetAtomMapNum()            # Atom map number.
+        for atom in mol.GetAtoms()      # Atoms in molecule.
+        if atom.GetAtomMapNum() > 0     # Only track atoms with assigned atom atom map numbers.
+    ]
+
+    # Create binary vector of length `N` with 1's at the indices of the atom map
+    # numbers in `amns`.
+    amns = np.array([1 if x in amns else 0 for x in np.arange(N)])
+
+    # Convert molecule to fingerprint.
+    fp = mol_to_fingerprint(mol, radius, num_bits)
+
+    # Concatenate fingerprint and atom map number vector.
+    conc_fp = np.hstack([fp, amns])
+
+    # Convert fingerprint to integer.
+    encoding = hash(conc_fp.data.tobytes())
+
+    return encoding
 
 def reaction_rule(smarts: str) -> ty.Callable:
     """
