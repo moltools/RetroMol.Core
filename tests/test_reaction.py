@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Author:        David Meijer
 Licence:       MIT License
@@ -16,7 +17,7 @@ class TestReactionRuleDecorator(unittest.TestCase):
     """
     Tests for the reaction rule decorator 'reaction_rule'.
     """
-    def rest_reaction_rule_as_decorator(self) -> None:
+    def test_reaction_rule_as_decorator(self) -> None:
         """
         Test the reaction rule decorator functionality with a reaction that 
         breaks a disulfide bridge. After applying the reaction rule, there 
