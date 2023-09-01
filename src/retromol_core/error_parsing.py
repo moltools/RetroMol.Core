@@ -2,7 +2,6 @@
 Author:         David Meijer
 Licence:        MIT License
 Description:    Error parsing functions.
-Dependencies:   python>=3.10
 
 Code adapted from David Vujic's implementation of railway oriented programming
 in Python: https://github.com/DavidVujic/pythonic-railway

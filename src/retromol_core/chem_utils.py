@@ -2,9 +2,6 @@
 Author:         David Meijer
 Licence:        MIT License
 Description:    Wrapper functions around RDKit for general cheminformatics.
-Dependencies:   python>=3.10
-                RDKit>=2023.03.1
-                numpy>=1.21.2
 """
 import typing as ty
 from logging import Logger

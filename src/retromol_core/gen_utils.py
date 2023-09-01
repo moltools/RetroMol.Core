@@ -2,7 +2,6 @@
 Author:         David Meijer
 Licence:        MIT License
 Description:    General utility functions.
-Dependencies:   python>=3.10
 """
 import logging 
 import errno
