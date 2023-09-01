@@ -11,7 +11,7 @@ import typing as ty
 
 from rdkit import Chem
 
-from moltools.reaction import reaction_rule
+from retromol_core.reaction import reaction_rule
 
 class TestReactionRuleDecorator(unittest.TestCase): 
     """

@@ -1,4 +1,4 @@
-name: moltools
+name: RetroMol.Core
 channels:
   - conda-forge
   - defaults
