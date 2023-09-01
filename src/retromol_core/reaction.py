@@ -188,6 +188,9 @@ def reaction_rule(smarts: str, logger: ty.Optional[Logger] = None) -> ty.Callabl
                     # Apply reaction rule to each match of `pattern` on `mol`.
                     for match in matches:
                         
+                        # Wrapped reaction rule is called here and is passed the
+                        # molecule, the match of the SMARTS pattern, and any
+                        # keyword arguments (e.g., Logger).
                         if result := func(Chem.RWMol(mol), list(match), **kwargs):
 
                             if logger is not None:
