@@ -9,9 +9,79 @@ Dependencies:  python>=3.10
 import unittest 
 import typing as ty
 
-from rdkit import Chem
+from rdkit import Chem, RDLogger
 
-from retromol_core.reaction import reaction_rule
+from retromol_core.reaction import (
+    mol_to_encoding,
+    reaction_rule
+)
+
+# Turn off RDKit warnings for testing.
+RDLogger.DisableLog("rdApp.*")
+
+class TestMolToEncoding(unittest.TestCase):
+    """
+    Tests for the function 'mol_to_encoding'.
+    """
+    def test_mol_to_encoding_for_identical_molecules_with_identical_mappings(self) -> None:
+        """
+        Test the function 'mol_to_encoding' with two identical molecules that
+        have identical atom mappings.
+        """
+        mol_1 = Chem.MolFromSmiles(r"[C:1][C:2][C:3]")
+        mol_2 = Chem.MolFromSmiles(r"[C:3][C:2][C:1]")
+
+        radius = 2
+        num_bits = 1024
+        N = 3 # Number of atoms in either molecule.
+
+        # Convert the molecules to encodings.
+        encoding_1 = mol_to_encoding(mol_1, radius, num_bits, N)
+        encoding_2 = mol_to_encoding(mol_2, radius, num_bits, N)
+
+        # Check if the encodings are the same.
+        self.assertEqual(encoding_1, encoding_2)
+
+    def test_mol_to_encoding_for_identical_molecules_with_different_mappings(self) -> None:
+        """
+        Test the function 'mol_to_encoding' with two identical molecules that
+        have different atom mappings.
+
+        NOTE: The encoding only takes into account if atom numbers are present
+        in a molecule and not how these are assigned.
+        """
+        mol_1 = Chem.MolFromSmiles(r"[C:1][C:2][C:3]")
+        mol_2 = Chem.MolFromSmiles(r"[C:1][C:3][C:2]")
+
+        radius = 2
+        num_bits = 1024
+        N = 3 # Number of atoms in either molecule.
+
+        # Convert the molecules to encodings.
+        encoding_1 = mol_to_encoding(mol_1, radius, num_bits, N)
+        encoding_2 = mol_to_encoding(mol_2, radius, num_bits, N)
+
+        # Check if the encodings are the same.
+        self.assertEqual(encoding_1, encoding_2)
+
+    def test_mol_to_encoding_for_identical_molecules_with_unique_mappings(self) -> None:
+        """
+        Test the function 'mol_to_encoding' with two identical molecules that
+        have unique atom mappings.
+        """
+        mol_1 = Chem.MolFromSmiles(r"[C:1][C:2][C:3]")
+        mol_2 = Chem.MolFromSmiles(r"[C:4][C:5][C:6]")
+
+        radius = 2
+        num_bits = 1024
+        N = 3 # Number of atoms in either molecule.
+
+        # Convert the molecules to encodings.
+        encoding_1 = mol_to_encoding(mol_1, radius, num_bits, N)
+        encoding_2 = mol_to_encoding(mol_2, radius, num_bits, N)
+
+        # Check if the encodings are the same.
+        self.assertNotEqual(encoding_1, encoding_2)
 
 class TestReactionRuleDecorator(unittest.TestCase): 
     """

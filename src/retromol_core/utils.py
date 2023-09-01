@@ -36,7 +36,15 @@ def smiles_to_mol(
     -------
     ty.Optional[Chem.Mol]
         RDKit molecule. None if the SMILES could not be converted.
+
+    Raises
+    ------
+    TypeError
+        If the SMILES is not a string.
     """
+    if not isinstance(smiles, str):
+        raise TypeError(f"SMILES must be a string, not {type(smiles)}.")
+
     mol = Chem.MolFromSmiles(smiles, sanitize=sanitize)
 
     if mol is None:
@@ -87,7 +95,15 @@ def mol_to_smiles(
     -------
     str
         SMILES string.
+
+    Raises
+    ------
+    TypeError
+        If the molecule is not an RDKit molecule.
     """
+    if not isinstance(mol, Chem.Mol):
+        raise TypeError(f"mol must be an RDKit molecule, not {type(mol)}.")
+    
     if remove_atom_mapping:
         # Remove atom mapping numbers from the atoms in the molecule.
         for atom in mol.GetAtoms():
