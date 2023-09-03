@@ -1,12 +1,7 @@
 Module `chem_utils`
 ===================
 
-.. automodule:: chem_utils
-    :members:
+.. note::
 
-.. automodule:: retromol_core.chem_utils
-    :members:
-
-.. automodule:: src/retromol_core.chem_utils
-    :members:
+    Coming soon.
 

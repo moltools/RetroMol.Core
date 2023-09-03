@@ -18,3 +18,6 @@ Contents
 
    usage
    module_chem_utils
+   module_error_parsing 
+   module_gen_utils 
+   module_reaction
