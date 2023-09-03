@@ -1,4 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Documentation Status](https://readthedocs.org/projects/retromolcore/badge/?version=latest)](https://retromolcore.readthedocs.io/en/latest/?badge=latest)
 
 # RetroMol.Core
 Reaction chemistry using RDKit-powered functions.
