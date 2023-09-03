@@ -1,4 +1,6 @@
 API
 ===
 
-More information coming soon.
+.. note::
+
+    More information coming soon.
