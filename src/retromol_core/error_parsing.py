@@ -1,4 +1,6 @@
 """
+error_parsing.py
+================
 Author:         David Meijer
 Licence:        MIT License
 Description:    Error parsing functions.

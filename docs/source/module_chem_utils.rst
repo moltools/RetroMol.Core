@@ -7,3 +7,6 @@ Module `chem_utils`
 .. automodule:: retromol_core.chem_utils
     :members:
 
+.. automodule:: src/retromol_core.chem_utils
+    :members:
+

@@ -1,4 +1,6 @@
 """
+reaction.py
+===========
 Author:         David Meijer
 Licence:        MIT License
 Description:    Wrapper functions around RDKit for reaction cheminformatics.
