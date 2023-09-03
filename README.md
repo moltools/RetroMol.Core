@@ -5,9 +5,7 @@
 Reaction chemistry using RDKit-powered functions.
 
 ## Installation
-```bash
-pip install .
-```
+For more information on how to install RetroMol.Core, see the [documentation](https://retromolcore.readthedocs.io/en/latest/usage.html#installation).
 
 ## Contribute
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for information related to developing the code.

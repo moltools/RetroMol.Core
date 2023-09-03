@@ -1,7 +1,4 @@
 API
 ===
 
-.. autosummary::
-   :toctree: generated
-
-   lumache
+More information coming soon.
