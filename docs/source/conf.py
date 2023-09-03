@@ -14,7 +14,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../simpleble/'))
+sys.path.insert(0, os.path.abspath('../../src/retromol_core/'))
 
 # -- Project information -------------------------------------------------------
 
