@@ -17,13 +17,4 @@ Contents
 .. toctree::
 
    usage
-   api
-
-Reference 
----------
-
-.. automodule:: chem_utils
-    :members:
-
-.. automodule:: retromol_core.chem_utils
-    :members:
+   module_chem_utils
