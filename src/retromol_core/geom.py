@@ -192,7 +192,10 @@ def center_of_mass(coords: np.array, weights: ty.List[float]) -> np.array:
 
     return center_of_mass
 
-def principal_axes(coords: np.array, weights: ty.List[float]) -> np.array:
+def calculate_moments_of_inertia_and_exes(
+    coords: np.array, 
+    weights: ty.List[float]
+) -> np.array:
     """
     Calculate moment of inertia tensor and principal axes.
 
