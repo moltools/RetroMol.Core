@@ -219,3 +219,68 @@ def mol_to_morgan_fingerprint(
     DataStructs.ConvertToNumpyArray(fp_vect, fp_arr)
     
     return fp_arr
+
+def fragment_mol(
+    mol: Chem.Mol, 
+    sort_ascending: bool = False
+) -> ty.List[Chem.Mol]:
+    """
+    Fragment a molecule into its disconnected fragments.
+
+    Parameters
+    ----------
+    mol : Chem.Mol
+        RDKit molecule.
+    sort_ascending : bool, optional
+        Whether to sort the fragments by ascending number of heavy atoms, by
+        default False.
+    
+    Returns
+    -------
+    ty.List[Chem.Mol]
+        List of RDKit molecules of the fragments.
+    """
+    fragments = list(Chem.GetMolFrags(mol, asMols=True))
+
+    if sort_ascending:
+        fragments.sort(key=lambda x: x.GetNumHeavyAtoms())
+
+    return fragments 
+
+def neutralize_mol(mol: Chem.Mol) -> Chem.Mol:
+    """
+    Neutralize a molecule by removing all charges and adding hydrogens.
+
+    Parameters
+    ----------
+    mol : Chem.Mol
+        RDKit molecule.
+    
+    Returns
+    -------
+    Chem.Mol
+        Neutralized RDKit molecule.
+
+    Notes
+    -----
+    Source: https://www.rdkit.org/docs/Cookbook.html
+    """
+    pattern = Chem.MolFromSmarts("[+1!h0!$([*]~[-1,-2,-3,-4]),-1!$([*]~[+1,+2,+3,+4])]")
+
+    # Find all matches to the pattern.
+    at_matches = mol.GetSubstructMatches(pattern)
+    at_matches_list = [y[0] for y in at_matches]
+
+    if len(at_matches_list) > 0:
+        for at_idx in at_matches_list:
+            # Get the atom and its charge and number of hydrogens.
+            atom = mol.GetAtomWithIdx(at_idx)
+            chg = atom.GetFormalCharge()
+            hcount = atom.GetTotalNumHs()
+            
+            # Update the atom's charge and number of hydrogens.
+            atom.SetFormalCharge(0)
+            atom.SetNumExplicitHs(hcount - chg)
+            atom.UpdatePropertyCache()
+
+    return mol

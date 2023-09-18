@@ -12,7 +12,7 @@ from logging import Logger
 import numpy as np
 from rdkit import Chem 
 
-from .chem_utils import mol_to_morgan_fingerprint
+from .chem_utils import mol_to_morgan_fingerprint, fragment_mol
 
 class SanitizationError(Exception):
     """
@@ -217,7 +217,7 @@ def reaction_rule(smarts: str, logger: ty.Optional[Logger] = None) -> ty.Callabl
                             # The result environment may contain multiple
                             # disconnected fragments. Yield each fragment as a
                             # product of the reaction rule.
-                            products = list(Chem.GetMolFrags(env, asMols=True))
+                            products = fragment_mol(env)
 
                             # Yield products of reaction rule as a result of a
                             # match of `pattern` on `mol`.
