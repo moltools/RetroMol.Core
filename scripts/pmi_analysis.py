@@ -5,6 +5,8 @@ pmi_analysis.py
 Author:         David Meijer
 Licence:        MIT License
 Description:    Script to create PMI plot of set of molecules.
+Note:           See https://pubs.acs.org/doi/full/10.1021/ci025599w# for more
+                information on the PMI plot.
 """
 import argparse 
 import typing as ty
@@ -188,7 +190,10 @@ def main() -> None:
         paper_bgcolor="white", 
         plot_bgcolor="white",
     )
-    fig.write_html(args.out)
+    fig.write_html(
+        args.out, 
+        include_mathjax="cdn" # To save LaTeX annotations appropriately.
+    )
 
     exit(0)
 
