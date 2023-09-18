@@ -122,7 +122,7 @@ def get_conformers(
         forceTol=force_tol,
         ignoreSmoothingFailures=ignore_smoothing_failures,
         enforceChirality=enforce_chirality,
-        num_threads=num_threads,
+        numThreads=num_threads,
         useExpTorsionAnglePrefs=use_exp_torsion_angle_prefs,
         useBasicKnowledge=use_basic_knowledge,
         printExpTorsionAngles=print_exp_torsion_angles,
@@ -240,7 +240,7 @@ def calculate_moments_of_inertia_and_exes(
 
     # Calculate principal axes.
     eigvals, eigvecs = eig(tensor)
-    idx = eigvals.argsort()[::-1]
+    idx = eigvals.argsort()
     eigvals = eigvals[idx]
     eigvecs = eigvecs[:, idx]
 
