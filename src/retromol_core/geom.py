@@ -224,6 +224,12 @@ def calculate_moments_of_inertia_and_exes(
         raise TypeError("weights must be a list.")
     if len(weights) != coords.shape[0]:
         raise ValueError("weights must be of length n.")
+    
+    # Calculate center of mass.
+    center_of_mass = np.average(coords, axis=0, weights=weights)
+
+    # Translate coordinates to center of mass.
+    coords -= center_of_mass
 
     # Calculate moment of inertia tensor.
     tensor = np.zeros((3, 3))

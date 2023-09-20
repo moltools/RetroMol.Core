@@ -69,7 +69,7 @@ def parse_input_file(
 
         lines = file_open.readlines()
 
-    return [tuple(line.strip().split("\t")) for line in lines]
+    return [tuple(line.strip().split(",")) for line in lines]
 
 def parse_smiles(smiles: str) -> Chem.Mol:
     """
@@ -129,6 +129,8 @@ def main() -> None:
             )
             # Pick first and only conformer.
             conf = confs[0]
+
+            # print(Chem.MolToXYZBlock(mol, 0)) # TODO: Remove.
             
             # Get positions and weights. 
             coords = conf.GetPositions()
@@ -157,7 +159,7 @@ def main() -> None:
     fig.update_traces(marker=dict(symbol="triangle-up", size=15, color="blue"))
 
     triangle_x = [0.0, 0.5, 1.0, 0.0]
-    triangle_y = [1.0, 0.0, 1.0, 1.0]
+    triangle_y = [1.0, 0.5, 1.0, 1.0]
     fig.add_trace(go.Scatter(
         x=triangle_x, 
         y=triangle_y, 
@@ -167,7 +169,7 @@ def main() -> None:
     ))
 
     fig.add_annotation(text="Rod", x=-0.025, y=1.025, showarrow=False, font=dict(size=14, family="serif"))
-    fig.add_annotation(text="Disc", x=0.5, y=-0.025, showarrow=False, font=dict(size=14, family="serif"))
+    fig.add_annotation(text="Disc", x=0.5, y=0.475, showarrow=False, font=dict(size=14, family="serif"))
     fig.add_annotation(text="Sphere", x=1.025, y=1.025, showarrow=False, font=dict(size=14, family="serif"))
 
     fig.update_xaxes(
