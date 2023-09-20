@@ -192,7 +192,7 @@ def center_of_mass(coords: np.array, weights: ty.List[float]) -> np.array:
 
     return center_of_mass
 
-def calculate_moments_of_inertia_and_exes(
+def calculate_moments_of_inertia_and_axes(
     coords: np.array, 
     weights: ty.List[float]
 ) -> np.array:

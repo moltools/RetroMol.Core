@@ -17,7 +17,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from retromol_core.chem_utils import smiles_to_mol, fragment_mol, neutralize_mol
-from retromol_core.geom import get_conformers, calculate_moments_of_inertia_and_exes
+from retromol_core.geom import get_conformers, calculate_moments_of_inertia_and_axes
 
 def cli() -> argparse.Namespace:
     """
@@ -137,7 +137,7 @@ def main() -> None:
             weights = [atom.GetMass() for atom in mol.GetAtoms()]
 
             # Calculate principal moments of inertia and principal axes.
-            moments, _ = calculate_moments_of_inertia_and_exes(coords, weights)
+            moments, _ = calculate_moments_of_inertia_and_axes(coords, weights)
 
             # Get normalized PMI ratios.
             i13 = moments[0] / moments[2]
