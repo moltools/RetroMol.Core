@@ -172,7 +172,7 @@ def get_conformer_energy(conf: Chem.Conformer) -> float:
 
     return energy
 
-def center_of_mass(coords: np.array, weights: ty.List[float]) -> np.array:
+def calculate_center_of_mass(coords: np.array, weights: ty.List[float]) -> np.array:
     """
     Calculates the center of mass of a set of coordinates.
 
@@ -226,7 +226,7 @@ def calculate_moments_of_inertia_and_axes(
         raise ValueError("weights must be of length n.")
     
     # Calculate center of mass.
-    center_of_mass = np.average(coords, axis=0, weights=weights)
+    center_of_mass = calculate_center_of_mass(coords, weights)
 
     # Translate coordinates to center of mass.
     coords -= center_of_mass
