@@ -17,7 +17,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from retromol_core.chem_utils import smiles_to_mol, fragment_mol, neutralize_mol
-from retromol_core.geom import get_conformers, calculate_moments_of_inertia_and_axes
+from retromol_core.geom import get_conformers, calculate_moments_of_inertia_and_axes, get_conformer_energy
 
 def cli() -> argparse.Namespace:
     """
@@ -123,12 +123,13 @@ def main() -> None:
             # Calculate conformers.
             confs = get_conformers(
                 mol, 
-                num_confs=1, 
+                num_confs=100, 
                 use_random_coords=True, 
-                optimize_confs=False
+                optimize_confs=True,
+                max_iters_optimization=1000,
             )
-            # Pick first and only conformer.
-            conf = confs[0]
+            # Pick conformer with lowest energy.
+            conf = min(confs, key=lambda conf: get_conformer_energy(conf))
 
             # print(Chem.MolToXYZBlock(mol, 0)) # TODO: Remove.
             
